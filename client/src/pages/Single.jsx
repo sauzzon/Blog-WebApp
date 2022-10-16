@@ -1,73 +1,54 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Edit from "../img/edit.png";
 import Delete from "../img/delete.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Menu from "../components/Menu";
+import moment from "moment";
+import { useContext } from "react";
+import { AuthContext } from "../context/authContext";
+import axios from "axios";
 
 const Single = () => {
+  const [post, setPost] = useState({});
+
+  const location = useLocation();
+
+  const postId = location.pathname.split("/")[2];
+
+  const { currentUser } = useContext(AuthContext);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`/posts/${postId}`);
+        setPost(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [postId]);
   return (
     <div className="single">
       <div className="content">
-        <img
-          src="https://images.unsplash.com/photo-1503614472-8c93d56e92ce?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8NGslMjBtb3VudGFpbnxlbnwwfHwwfHw%3D&w=1000&q=80"
-          alt=""
-        />
+        <img src={post?.img} alt="" />
         <div className="user">
-          <img
-            src="https://resources.premierleague.com/premierleague/photos/players/250x250/p209243.png"
-            alt=""
-          />
+          {post.userImg && <img src={post.userImg} alt="" />}
           <div className="info">
-            <span>John</span>
-            <p>Posted 2 days ago</p>
+            <span>{post.username}</span>
+            <p>Posted {moment(post.date).fromNow()}</p>
           </div>
-          <div className="edit">
-            <Link to={`/write?edit=2`}>
-              <img src={Edit} alt="" />
-            </Link>
-            <img src={Delete} alt="" />
-          </div>
+          {currentUser.username === post.username && (
+            <div className="edit">
+              <Link to={`/write?edit=2`}>
+                <img src={Edit} alt="" />
+              </Link>
+              <img src={Delete} alt="" />
+            </div>
+          )}
         </div>
-        <h1>
-          Lorem ipsum, adipisicing elit. hello ssdum voluptates ab dolorum?
-        </h1>
-        <p>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam iure
-          sequi illo, quidem alias, perferendis beatae, numquam vero magnam vel
-          necessitatibus atque odit facere voluptatum.
-          <br />
-          <br />
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam, nulla
-          deleniti. Libero delectus culpa similique ratione explicabo, hic ipsa
-          veritatis quae magnam facilis cum ex odio sequi, temporibus quos iusto
-          voluptates repellat. Unde culpa, in iste itaque nostrum nihil
-          reprehenderit quisquam ipsum corporis eligendi praesentium ab iusto
-          aliquid dolores enim adipisci possimus et quod, voluptate sed
-          repudiandae quidem porro. Quod omnis corrupti rem cum molestiae quam
-          quaerat sequi soluta nobis dolores sunt architecto quos aspernatur
-          quibusdam minus dignissimos officiis laborum, error libero, quas eius.
-          Omnis quae cumque nemo corporis voluptas velit necessitatibus sit quis
-          placeat debitis distinctio, sed, nulla maxime!
-          <br />
-          <br />
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores eos
-          voluptates consectetur. Veniam velit vero enim totam reprehenderit
-          cupiditate odio ipsum, autem quia tempore dolor ducimus iure non nulla
-          quidem, explicabo cumque obcaecati? Modi rem omnis aut magnam corrupti
-          doloribus enim velit unde rerum vitae officiis aperiam, officia dolore
-          beatae. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi
-          officia aliquam delectus, est, natus odio voluptas neque iure
-          temporibus voluptate ipsa tenetur explicabo autem necessitatibus
-          perferendis voluptatum sunt? Quas, voluptates.
-          <br />
-          <br />
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores eos
-          voluptates consectetur. Veniam velit vero enim totam reprehenderit
-          cupiditate odio ipsum, autem quia tempore dolor ducimus iure non nulla
-          quidem, explicabo cumque obcaecati? Modi rem omnis aut magnam corrupti
-          doloribus enim velit unde rerum vitae officiis aperiam, officia dolore
-          beatae.
-        </p>
+        <h1>{post.title}</h1>
+        {post.desc}
       </div>
       <Menu />
     </div>
