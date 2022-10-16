@@ -1,40 +1,21 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
-const Menu = () => {
-  const imageLink =
-    "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8NGslMjBtb3VudGFpbnxlbnwwfHwwfHw%3D&w=1000&q=80";
-  const posts = [
-    {
-      id: 1,
-      title: "Lorem ipsum dolor sit amet, consectetur",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis ullratione omnis alias autem nisi quod ipsum similique ",
-      img: imageLink,
-    },
-    {
-      id: 2,
-      title: "Lorem ipsum dolor sit amet, consectetur",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis ullratione omnis alias autem nisi quod ipsum similique ",
-      img: imageLink,
-    },
-    {
-      id: 3,
-      title: "Lorem ipsum dolor sit amet, consectetur",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis ullratione omnis alias autem nisi quod ipsum similique ",
-      img: imageLink,
-    },
-    {
-      id: 4,
-      title: "Lorem ipsum dolor sit amet, consectetur",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis ullratione omnis alias autem nisi quod ipsum similique ",
-      img: imageLink,
-    },
-    {
-      id: 5,
-      title: "Lorem ipsum dolor sit amet, consectetur",
-      desc: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis ullratione omnis alias autem nisi quod ipsum similique ",
-      img: imageLink,
-    },
-  ];
+const Menu = ({ cat }) => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`/posts/?cat=${cat}`);
+        setPosts(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [cat]);
+
   return (
     <div className="menu">
       <h1>Other post you may like</h1>
